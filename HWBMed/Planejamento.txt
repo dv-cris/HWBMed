@@ -1,0 +1,61 @@
+--------------------------------------------------
+Planejamento
+--------------------------------------------------
+Faturas
+	FecharFatura - POST
+Consulta
+	GerarConsulta - POST
+	AdicionarServico - POST
+	ExcluitServico - DELETE
+	FecharConsulta - PUT
+	VisualizarConsulta - GET
+	AlterarQuantidade - PACTH
+	ExcluirConsulta - DELETE
+	ConsultarDatasLivres - GET
+Serviços
+	CRUD
+Usuário
+	CRU
+Area
+	CRUD
+Perfil
+	CRUD
+--------------------------------------------------
+Regras
+--------------------------------------------------
+Usuário - Perfil
+	Usuário pode possuir perfil (Profissional)
+	Status - Profissional está ativo ou não
+
+Profissional - Área
+	Profissional possui uma ou varias áreas
+
+Área - Serviços
+	Serviços possui uma área
+	Preços
+	IVA
+Consulta - Serviço
+	Consulta possui um ou vários serviços
+	IVA
+	Quantidade
+	Valor
+
+Consulta - (Profissional - Usuário)
+	Consulta possui apenas um usuário
+	Consulta possui apenas um profissional
+	Data e hora criação
+	Data e hora finalização
+	Descrição clinica
+	Descrição medica
+	Status - Finalizado ou não
+
+Fatura - (Consulta - Profissional)
+	Fatura possui apenas uma consulta
+	Fatura possui apenas um profissional
+	Data e hora de finalização
+	Status - Pago ou não
+	
+	
+	
+
+		

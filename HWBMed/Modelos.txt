@@ -1,0 +1,36 @@
+Usuário/cliente
+	Nome
+	Data de nascimento
+	Morada
+	Localidade
+	Código-postal
+	NIF
+	Utente
+
+Equipe profissional
+	1 Perfil
+		Cargo (Médico, Assistente ou Recepcionista)
+	N Area
+		Descrição (Generalista, Ortodontista ou Cirurgia Oral)
+	N Servico
+		Descricao
+		Valor
+
+Consultas
+	Numero da consulta
+	Data e Hora Marcado
+	Data e Hora Realizado
+	Observações Clinica
+	Observações Médica
+	N procedimentos
+	1 Cliente
+	1 Profissional
+
+Faturas
+	Numero da Fatura
+	NIF
+	Valor Final	
+	Status de pagamento	
+	Data e hora
+	1 Consulta
+	Pagamentos
