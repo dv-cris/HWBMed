@@ -1,0 +1,56 @@
+﻿@model IEnumerable<HWBMed.Models.Profile>
+@{
+    ViewData["Title"] = "Profile list";
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMenssage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
+        @TempData["ErrorMenssage"]
+    </div>
+}
+
+<div class="text-center">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+        <a class="btn btn-primary" role="button" asp-controller="Profile" asp-action="Create">Create</a>
+    </div>
+    <br/>
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">@Html.DisplayNameFor(model => model.Name)</th>
+                <th scope="col">@Html.DisplayNameFor(model => model.Discount)</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(Model != null && Model.Any())
+            {   
+                @foreach(Profile profile in Model)
+                {
+                    <tr>
+                        <th scope="row">@profile.Id</th>
+                        <td>@profile.Name</td>
+                        <td>@profile.Discount</td>
+                        <td>
+                        <div class="btn-group" role="group">
+                            <a role="button" class="btn btn-warning" asp-controller="Profile" asp-action="Edit" asp-route-id="@profile.Id">Editar</a>
+                            <a rule="button" class="btn btn-danger" asp-controller="Profile" asp-action="Delete" asp-route-id="@profile.Id">Apagar</a>
+                        </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

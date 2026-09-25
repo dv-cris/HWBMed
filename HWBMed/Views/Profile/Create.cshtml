@@ -1,0 +1,38 @@
+﻿@model Profile
+@{
+    ViewData["Title"] = "Create Profile";
+}
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+</div>
+<form asp-controller="Profile" asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <span class="form-label">Name</span>
+        <input type="text" class="form-control" asp-for="Name">
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="md-3">
+        <label for="range4" class="form-label">Discount (%)</label>
+        <input type="range" class="form-range" min="0" max="100" id="range4" asp-for="Discount">
+        <span asp-validation-for="Name" class="text-danger"></span>
+        <output for="range4" id="rangeValue" aria-hidden="true"></output>
+    </div>
+    <div class="mb-3 d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a class="btn btn-secondary" role="button" asp-controller="Profile" asp-action="Index">List profile</a>
+    </div>
+</form>
+
+<script>
+    // This is an example script, please modify as needed
+    const rangeInput = document.getElementById('range4');
+    const rangeOutput = document.getElementById('rangeValue');
+
+    // Set initial value
+    rangeOutput.textContent = rangeInput.value;
+
+    rangeInput.addEventListener('input', function() {
+      rangeOutput.textContent = this.value;
+    });
+</script>
