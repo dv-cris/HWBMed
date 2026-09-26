@@ -8,5 +8,6 @@ namespace HWBMed.Data
     {
         public DbSet<Profile> Profiles { get; set; } = default!;
         public DbSet<Area> Areas { get; set; } = default!;
+        public DbSet<User> Users { get; set; } = default!;
     }
 }

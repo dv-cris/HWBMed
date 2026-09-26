@@ -1,0 +1,83 @@
+﻿@model User
+@{
+    ViewData["Title"] = "Create User";
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMenssage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
+        @TempData["ErrorMenssage"]
+    </div>
+}
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+</div>
+<form asp-controller="User" asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="input-group mb-3">
+        <label asp-for="Name" class="input-group-text"></label>
+        <input type="text" class="form-control" asp-for="Name">
+        <span asp-validation-for="Name" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="BirthDate" class="input-group-text"></label>
+        <input type="text" class="form-control" asp-for="BirthDate">
+        <span asp-validation-for="BirthDate" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="Local" class="input-group-text"></label>
+        <input type="text" class="form-control" asp-for="Local">
+        <span asp-validation-for="Local" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="Address" class="input-group-text"></label>
+        <input type="text" class="form-control" asp-for="Address">
+        <span asp-validation-for="Address" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="PostalCode" class="input-group-text"></label>
+        <input type="text" class="form-control" asp-for="PostalCode">
+        <span asp-validation-for="PostalCode" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="NIF" class="input-group-text"></label>
+        <input type="text" class="form-control" asp-for="NIF">
+        <span asp-validation-for="NIF" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="UtenteNumber" class="input-group-text"></label>
+        <input type="text" class="form-control" asp-for="UtenteNumber">
+        <span asp-validation-for="UtenteNumber" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="PhoneNumber" class="input-group-text"></label>
+        <input type="text" class="form-control" asp-for="PhoneNumber">
+        <label asp-for="ContactPhone" class="input-group-text"></label>
+        <div class="input-group-text">
+            <input type="checkbox" asp-for="ContactPhone" class="form-check-input mt-0">
+        </div>
+        <span asp-validation-for="PhoneNumber" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="Email" class="input-group-text"></label>
+        <input type="text" class="form-control" asp-for="Email" />
+
+        <label asp-for="ContactEmail" class="input-group-text"></label>
+        <div class="input-group-text">
+            <input type="checkbox" asp-for="ContactEmail" class="form-check-input mt-0" />
+        </div>
+        <span asp-validation-for="Email" class="input-group-text text-danger"></span>
+    </div>
+    <div class="mb-3 d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a class="btn btn-secondary" role="button" asp-controller="User" asp-action="Index">List Users</a>
+    </div>
+</form>
