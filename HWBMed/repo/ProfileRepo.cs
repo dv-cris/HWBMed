@@ -10,22 +10,12 @@ namespace HWBMed.repo
         {
             _context = context;
         }
-        public List<Profile> All()
-        {
-            return _context.Profiles.ToList();
-        }
         public Profile Add(Profile profile)
         {
             _context.Profiles.Add(profile);
             _context.SaveChanges();
             return profile;
         }
-
-        public Profile ListId(int id)
-        {
-            return _context.Profiles.FirstOrDefault(x => x.Id == id);
-        }
-
         public Profile Update(Profile profile)
         {
             Profile profileDB = ListId(profile.Id);
@@ -36,7 +26,6 @@ namespace HWBMed.repo
             _context.SaveChanges();
             return profileDB;
         }
-
         public bool Delete(int id)
         {
             Profile profileDB = ListId(id);
@@ -45,5 +34,18 @@ namespace HWBMed.repo
             _context.SaveChanges();
             return true;
         }
+        public List<Profile> All()
+        {
+            return _context.Profiles.ToList();
+        }
+        
+        public Profile ListId(int id)
+        {
+            return _context.Profiles.FirstOrDefault(x => x.Id == id);
+        }
+
+        
+
+        
     }
 }

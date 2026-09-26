@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<HWBMed.Models.Profile>
+
 @{
     ViewData["Title"] = "Profile list";
 }
@@ -24,7 +25,40 @@
     </div>
     <br/>
     <h1 class="display-4">@ViewData["Title"]</h1>
-    <table class="table table-striped">
+
+    @(Html
+    .Grid(Model)
+    .Build(columns =>
+    {
+        columns.Add(model => model.Name).Titled(@Html.DisplayNameFor(model => model.Name));
+        columns.Add(model => model.Discount).Titled(@Html.DisplayNameFor(model => model.Discount));
+        columns.Add(model => $@"
+            <div class=""btn-group"" role=""group"">
+                <a role=""button""
+                   class=""btn btn-warning""
+                   href=""{Url.Action("Edit", "Profile", new { id = model.Id })}"">
+                    Editar
+                </a>
+                <a role=""button""
+                   class=""btn btn-danger""
+                   href=""{Url.Action("Delete", "Profile", new { id = model.Id })}"">
+                    Apagar
+                </a>
+            </div>
+        ")
+        .Encoded(false);
+    })
+    .Filterable(GridFilterCase.Lower)
+    .Using(GridFilterMode.Header)
+    .Empty("No data found")
+    .Pageable(pager =>
+    {
+        pager.RowsPerPage = 4;
+    })
+    .Sortable()
+)
+
+    @* <table class="table table-striped">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -52,5 +86,5 @@
                 }
             }
         </tbody>
-    </table>
+    </table> *@
 </div>
