@@ -64,8 +64,6 @@ namespace HWBMed.Controllers
                 TempData["ErrorMenssage"] = $"Algo deu errado!: {ex.Message}";
                 return RedirectToAction("index");
             }
-
-
         }
         [HttpGet]
         public IActionResult Delete(int id)

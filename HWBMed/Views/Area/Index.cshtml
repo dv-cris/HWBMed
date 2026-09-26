@@ -1,0 +1,60 @@
+﻿@model IEnumerable<HWBMed.Models.Area>
+
+@{
+    ViewData["Title"] = "Area list";
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMenssage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
+        @TempData["ErrorMenssage"]
+    </div>
+}
+
+<div class="text-center">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+        <a class="btn btn-primary" role="button" asp-controller="Area" asp-action="Create">Create</a>
+    </div>
+    <br />
+    <h1 class="display-4">@ViewData["Title"]</h1>
+
+    @(Html
+    .Grid(Model)
+    .Build(columns =>
+    {
+        columns.Add(model => model.Id).Titled(@Html.DisplayNameFor(model => model.Id));
+        columns.Add(model => model.Name).Titled(@Html.DisplayNameFor(model => model.Name));
+        columns.Add(model => $@"
+            <div class=""btn-group"" role=""group"">
+                <a role=""button""
+                   class=""btn btn-warning""
+                   href=""{Url.Action("Edit", "Area", new { id = model.Id })}"">
+                    Editar
+                </a>
+                <a role=""button""
+                   class=""btn btn-danger""
+                   href=""{Url.Action("Delete", "Area", new { id = model.Id })}"">
+                    Apagar
+                </a>
+            </div>
+        ")
+        .Encoded(false);
+    })
+    .Filterable(GridFilterCase.Lower)
+    .Using(GridFilterMode.Header)
+    .Empty("No data found")
+    .Pageable(pager =>
+    {
+        pager.RowsPerPage = 4;
+    })
+    .Sortable()
+    )
+</div>

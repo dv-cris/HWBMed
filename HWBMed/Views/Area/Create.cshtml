@@ -1,0 +1,19 @@
+﻿@model Area
+@{
+    ViewData["Title"] = "Create Area";
+}
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+</div>
+<form asp-controller="Area" asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <span class="form-label">Name</span>
+        <input type="text" class="form-control" asp-for="Name">
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3 d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a class="btn btn-secondary" role="button" asp-controller="Area" asp-action="Index">List Area</a>
+    </div>
+</form>
