@@ -42,5 +42,10 @@ namespace HWBMed.repo
         {
             return _context.Areas.FirstOrDefault(x => x.Id == id);
         }
+
+        public Area FindName(string name)
+        {
+            return _context.Areas.FirstOrDefault(x => x.Name == name);
+        }
     }
 }

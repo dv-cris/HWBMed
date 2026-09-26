@@ -25,6 +25,13 @@ namespace HWBMed.Controllers
         {
             try
             {
+                var profileDB = _profileRepo.FindName(profile.Name);
+                if (profileDB == null)
+                {
+                    TempData["ErrorMenssage"] = "Perfil já cadastrado!";
+                    return View(profile);
+                }
+
                 if (ModelState.IsValid)
                 {
                     _profileRepo.Add(profile);
@@ -37,8 +44,7 @@ namespace HWBMed.Controllers
             {
                 TempData["ErrorMenssage"] = $"Algo deu errado! {ex.Message}";
                 return RedirectToAction("index");
-            }
-            
+            }            
         }
 
         public IActionResult Edit(int id)
@@ -85,7 +91,6 @@ namespace HWBMed.Controllers
                 TempData["ErrorMenssage"] = $"Algo deu errado!: {ex.Message}";
                 return RedirectToAction("index");
             }
-
         }
     }
 }

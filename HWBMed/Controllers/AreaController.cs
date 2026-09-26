@@ -25,6 +25,11 @@ namespace HWBMed.Controllers
         {
             try
             {
+                var areaBD = _areaRepo.FindName(area.Name);
+                if (areaBD != null) {
+                    TempData["ErrorMenssage"] = "Area já cadastrada";
+                    return View(area);
+                }
                 if (ModelState.IsValid)
                 {
                     _areaRepo.Add(area);

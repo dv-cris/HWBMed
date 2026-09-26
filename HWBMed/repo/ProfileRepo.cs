@@ -44,8 +44,9 @@ namespace HWBMed.repo
             return _context.Profiles.FirstOrDefault(x => x.Id == id);
         }
 
-        
-
-        
+        public Profile FindName(string name)
+        {
+            return _context.Profiles.FirstOrDefault(x => x.Name == name);
+        }
     }
 }

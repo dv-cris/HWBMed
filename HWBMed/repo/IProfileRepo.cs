@@ -5,6 +5,7 @@ namespace HWBMed.repo
     {
         List<Profile> All();
         Profile ListId(int id);
+        Profile FindName(string name);
         Profile Add(Profile profile);
         Profile Update(Profile profile);
         bool Delete(int id);
