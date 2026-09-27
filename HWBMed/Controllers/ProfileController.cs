@@ -26,7 +26,7 @@ namespace HWBMed.Controllers
             try
             {
                 var profileDB = _profileRepo.FindName(profile.Name);
-                if (profileDB == null)
+                if (profileDB != null)
                 {
                     TempData["ErrorMenssage"] = "Perfil já cadastrado!";
                     return View(profile);
@@ -49,7 +49,7 @@ namespace HWBMed.Controllers
 
         public IActionResult Edit(int id)
         {
-            Profile profile = _profileRepo.ListId(id);
+            Profile profile = _profileRepo.FindId(id);
             return View(profile);
         }
         [HttpPost]
@@ -74,7 +74,7 @@ namespace HWBMed.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            Profile profile = _profileRepo.ListId(id);
+            Profile profile = _profileRepo.FindId(id);
             return View(profile);
         }
         [HttpPost]

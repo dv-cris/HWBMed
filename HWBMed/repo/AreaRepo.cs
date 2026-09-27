@@ -19,7 +19,7 @@ namespace HWBMed.repo
 
         public Area Update(Area area)
         {
-            Area areaDB = ListId(area.Id);
+            Area areaDB = FindId(area.Id);
             if (areaDB == null) throw new Exception("Houve um erro na atualização");
             areaDB.Name = area.Name;
             _context.Areas.Update(areaDB);
@@ -28,7 +28,7 @@ namespace HWBMed.repo
         }
         public bool Delete(int id)
         {
-            Area areaDB = ListId(id);
+            Area areaDB = FindId(id);
             if (areaDB == null) throw new Exception("Houve um erro na atualização");
             _context.Areas.Remove(areaDB);
             _context.SaveChanges();
@@ -38,7 +38,7 @@ namespace HWBMed.repo
         {
             return _context.Areas.ToList();
         }
-        public Area ListId(int id)
+        public Area FindId(int id)
         {
             return _context.Areas.FirstOrDefault(x => x.Id == id);
         }

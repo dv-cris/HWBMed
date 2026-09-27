@@ -7,7 +7,7 @@ namespace HWBMed.repo
         List<User> All();
         User FindNIF(string NIF);
         User FindUtente(string UtenteNumber);
-        User ListId(int id);
+        User FindId(int id);
         User Add(User user);
         User Update(User user);
         bool Delete(int id);

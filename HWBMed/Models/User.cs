@@ -20,6 +20,7 @@ namespace HWBMed.Models
         [EmailAddress]
         public string? Email { get; set; }
         public bool ContactEmail { get; set; }
+        public Employee? Employee { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 

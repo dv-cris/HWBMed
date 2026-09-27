@@ -1,0 +1,88 @@
+﻿@model HWBMed.Models.ViewModel.EmployeeCreateViewModel
+@{
+    ViewData["Title"] = "Create Employee";
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMenssage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
+        @TempData["ErrorMenssage"]
+    </div>
+}
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+</div>
+<form asp-controller="Employee" asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" class="form-control" asp-for="UserID">
+    <div class="input-group mb-3">
+        <label asp-for="Name" class="input-group-text"></label>
+        @if (!string.IsNullOrWhiteSpace(Model.Name))
+        {
+            <input type="text" readonly class="form-control" asp-for="Name">
+        }
+        else
+        {
+            <input type="text" class="form-control" asp-for="Name">
+        }
+        <span asp-validation-for="Name" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="NIF" class="input-group-text"></label>
+        @if (!string.IsNullOrWhiteSpace(Model.NIF))
+        {
+            <input type="text" readonly class="form-control" asp-for="NIF">
+        }
+        else
+        {
+            <input type="text" class="form-control" asp-for="NIF">
+        }
+        <span asp-validation-for="NIF" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="PhoneNumber" class="input-group-text"></label>
+        @if (!string.IsNullOrWhiteSpace(Model.PhoneNumber))
+        {
+            <input type="text" readonly class="form-control" asp-for="PhoneNumber">
+        }
+        else
+        {
+            <input type="text" class="form-control" asp-for="PhoneNumber">
+        }
+        <span asp-validation-for="PhoneNumber" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="Email" class="input-group-text"></label>
+        @if (!string.IsNullOrWhiteSpace(Model.Email))
+        {
+            <input type="text" readonly class="form-control" asp-for="Email">
+        }
+        else
+        {
+            <input type="text" class="form-control" asp-for="Email">
+        }
+        <span asp-validation-for="Email" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="Password" class="input-group-text"></label>
+        <input type="text" class="form-control" asp-for="Password">
+        <span asp-validation-for="Password" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="ProfileID" class="input-group-text"></label>
+        <select class="form-control" asp-for="ProfileID" asp-items="ViewBag.Profiles"></select>
+        <span asp-validation-for="ProfileID" class="input-group-text text-danger"></span>
+    </div>
+    <div class="mb-3 d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a class="btn btn-secondary" role="button" asp-controller="User" asp-action="Index">List Users</a>
+    </div>
+</form>

@@ -47,7 +47,7 @@ namespace HWBMed.Controllers
         }
         public IActionResult Edit(int id)
         {
-            Area area = _areaRepo.ListId(id);
+            Area area = _areaRepo.FindId(id);
             return View(area);
         }
         [HttpPost]
@@ -72,7 +72,7 @@ namespace HWBMed.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            Area area = _areaRepo.ListId(id);
+            Area area = _areaRepo.FindId(id);
             return View(area);
         }
         [HttpPost]

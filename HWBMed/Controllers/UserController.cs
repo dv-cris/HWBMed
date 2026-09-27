@@ -55,7 +55,7 @@ namespace HWBMed.Controllers
         }
         public IActionResult Edit(int id)
         {
-            User user = _userRepo.ListId(id);
+            User user = _userRepo.FindId(id);
             return View(user);
         }
         [HttpPost]
@@ -79,7 +79,7 @@ namespace HWBMed.Controllers
         }
         public IActionResult Delete(int id)
         {
-            User user = _userRepo.ListId(id);
+            User user = _userRepo.FindId(id);
             return View(user);
         }
         [HttpPost]

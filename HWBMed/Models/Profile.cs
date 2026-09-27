@@ -11,5 +11,6 @@ namespace HWBMed.Models
         [Display(Name = "Discount")]
         [Required(ErrorMessage = "RequiredErrorMessage")]
         public decimal Discount { get; set; }
+        public Employee? Employee { get; set; }
     }
 }

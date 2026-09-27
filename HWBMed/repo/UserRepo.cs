@@ -1,5 +1,6 @@
 ﻿using HWBMed.Data;
 using HWBMed.Models;
+using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HWBMed.repo
@@ -19,7 +20,7 @@ namespace HWBMed.repo
         }
         public User Update(User user)
         {
-            User userDB = ListId(user.Id);
+            User userDB = FindId(user.Id);
             if (userDB == null) throw new Exception("Houve um erro na atualização");
             userDB.Name = user.Name;
             userDB.BirthDate = user.BirthDate;
@@ -37,7 +38,7 @@ namespace HWBMed.repo
         }
         public bool Delete(int id)
         {
-            User userDB = ListId(id);
+            User userDB = FindId(id);
             if (userDB == null) throw new Exception("Houve um erro na atualização");
             _context.Users.Remove(userDB);
             _context.SaveChanges();
@@ -47,7 +48,7 @@ namespace HWBMed.repo
         {
             return _context.Users.ToList();
         }
-        public User ListId(int id)
+        public User FindId(int id)
         {
             return _context.Users.FirstOrDefault(x => x.Id == id);
         }

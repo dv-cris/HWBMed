@@ -1,0 +1,48 @@
+﻿@model HWBMed.Models.Employee;
+@{
+    ViewData["Title"] = "Employee Delete";
+}
+<div class="text-center">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="display-4">@ViewData["Title"]</h1>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.User.Name)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.User.Name)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Email)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Email)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.PhoneNumber)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.PhoneNumber)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Profile.Name)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Profile.Name)
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<br />
+<div class="mb-3 d-grid gap-2">
+    <a class="btn btn-primary" asp-controller="Area" asp-action="Index" role="button">Cancel</a>
+    <form class="d-grid" asp-controller="Area" asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button class="btn btn-danger" asp-controller="Employee" asp-action="ExeDelete">Confirm</button>
+    </form>
+
+</div>

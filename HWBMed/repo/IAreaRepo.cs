@@ -6,7 +6,7 @@ namespace HWBMed.repo
     {
         List<Area> All();
         Area FindName(string name);
-        Area ListId(int id);
+        Area FindId(int id);
         Area Add(Area area);
         Area Update(Area area);
         bool Delete(int id);

@@ -1,4 +1,5 @@
 using HWBMed.Data;
+using HWBMed.Models;
 using HWBMed.repo;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +18,14 @@ namespace HWBMed
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<Employee>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<IProfileRepo, ProfileRepo>();
             builder.Services.AddScoped<IAreaRepo, AreaRepo>();
             builder.Services.AddScoped<IUserRepo, UserRepo>();
+            builder.Services.AddScoped<IEmployeeRepo, EmployeeRepo>();
 
             var app = builder.Build();
 

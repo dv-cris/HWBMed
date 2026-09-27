@@ -18,7 +18,7 @@ namespace HWBMed.repo
         }
         public Profile Update(Profile profile)
         {
-            Profile profileDB = ListId(profile.Id);
+            Profile profileDB = FindId(profile.Id);
             if (profileDB == null) throw new Exception("Houve um erro na atualização");
             profileDB.Name = profile.Name;
             profileDB.Discount = profile.Discount;
@@ -28,7 +28,7 @@ namespace HWBMed.repo
         }
         public bool Delete(int id)
         {
-            Profile profileDB = ListId(id);
+            Profile profileDB = FindId(id);
             if (profileDB == null) throw new Exception("Houve um erro na atualização");
             _context.Profiles.Remove(profileDB);
             _context.SaveChanges();
@@ -39,7 +39,7 @@ namespace HWBMed.repo
             return _context.Profiles.ToList();
         }
         
-        public Profile ListId(int id)
+        public Profile FindId(int id)
         {
             return _context.Profiles.FirstOrDefault(x => x.Id == id);
         }
