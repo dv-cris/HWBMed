@@ -27,25 +27,91 @@ namespace HWBMed.repo
                 IdUser = employeeModel.UserID,
                 EmailConfirmed = true
             };
-            return await _userManager.CreateAsync(employee, employeeModel.Password); 
+            var result = await _userManager.CreateAsync(employee, employeeModel.Password);
+            if (result.Succeeded)
+            {
+                foreach (var areaId in employeeModel.ListAreaIds)
+                {
+                    _context.employeeAreas.Add(new EmployeeArea
+                    {
+                        IdEmployee = employee.Id,
+                        IdArea = areaId
+                    });
+                }
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    //var mensagem = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                    await _userManager.DeleteAsync(employee);
+                    return IdentityResult.Failed(new IdentityError
+                    {
+                        Code = "EmployeeAreaSaveError",
+                        Description = $"O funcionário foi validado, mas ocorreu um erro ao vincular as áreas: {ex.Message}"
+                    });
+                }
+            }
+            return result;
         }
         public async Task<IdentityResult> UpdateAsync(EmployeeCreateViewModel employeeModel)
         {
-            Employee employeeDB = FindId(employeeModel.Id);
-            if (employeeDB == null) throw new Exception("Houve um erro na atualização");
-            employeeDB.Email = employeeModel.Email;
-            employeeDB.PhoneNumber = employeeModel.PhoneNumber;
-            employeeDB.IdProfile = employeeModel.ProfileID;            
-            return await _userManager.UpdateAsync(employeeDB);
-        }
-        public async Task<IdentityResult> UpadatePassAsync(EmployeeCreateViewModel employeeModel)
-        {
-            Employee employeeDB = FindId(employeeModel.Id);
-            if (employeeDB == null) throw new Exception("Houve um erro na atualização");
-            var token = await _userManager.GeneratePasswordResetTokenAsync(employeeDB);
-            return await _userManager.ResetPasswordAsync(employeeDB, token, employeeModel.Password);
-        }
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                Employee employeeDB = FindId(employeeModel.Id);
+                if (employeeDB == null)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception("Houve um erro na atualização");
+                }
+                employeeDB.Email = employeeModel.Email;
+                employeeDB.PhoneNumber = employeeModel.PhoneNumber;
+                employeeDB.IdProfile = employeeModel.ProfileID;
+                var result =  await _userManager.UpdateAsync(employeeDB);
+                if (!result.Succeeded)
+                {
+                    await transaction.RollbackAsync();
+                    return result; 
+                }
+                if(!string.IsNullOrWhiteSpace(employeeModel.Password))
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(employeeDB);
+                    result = await _userManager.ResetPasswordAsync(employeeDB, token, employeeModel.Password);
+                    if (!result.Succeeded)
+                    {
+                        await transaction.RollbackAsync();
+                        return result;
+                    }
+                }
 
+                
+                _context.employeeAreas.RemoveRange(employeeDB.EmployeeAreas);
+                foreach (var areaId in employeeModel.ListAreaIds)
+                {                    
+                    _context.employeeAreas.Add(new EmployeeArea
+                    {
+                        IdEmployee = employeeDB.Id,
+                        IdArea = areaId
+                    });
+                }
+               
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                //var mensagem = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                await transaction.RollbackAsync();
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "EmployeeAreaSaveError",
+                    Description = $"O funcionário foi validado, mas ocorreu um erro: {ex.Message}"
+                });
+            }
+        } 
         public bool Delete(string id)
         {
             Employee employeeDB = FindId(id);
@@ -60,7 +126,7 @@ namespace HWBMed.repo
         }
         public Employee FindId(string id)
         {
-            return _context.Employees.Include(e => e.User).Include(e => e.Profile).FirstOrDefault(x => x.Id == id);
-        }        
+            return _context.Employees.Include(e => e.User).Include(e => e.Profile).Include(e => e.EmployeeAreas).FirstOrDefault(x => x.Id == id);
+        }
     }
 }

@@ -10,11 +10,11 @@
     </div>
 }
 
-@if (TempData["ErrorMenssage"] != null)
+@if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger" role="alert">
         <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
-        @TempData["ErrorMenssage"]
+        @TempData["ErrorMessage"]
     </div>
 }
 <div class="text-center">
@@ -45,6 +45,48 @@
         <label asp-for="ProfileID" class="input-group-text"></label>
         <select class="form-control" asp-for="ProfileID" asp-items="ViewBag.Profiles"></select>
         <span asp-validation-for="ProfileID" class="input-group-text text-danger"></span>
+    </div>
+    <div class="card-body bg-light">
+        <div class="row g-2">
+            
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-secondary-subtle mb-3">
+        <div class="card-header bg-secondary text-white py-2">
+            <h6 class="mb-0 fw-bold">List areas</h6>
+            <span asp-validation-for="ListAreaIds" class="text-bg-light text-danger"></span>
+        </div>
+        <div class="card-body bg-light">
+            <div class="row g-2">
+                @if (ViewBag.Areas != null)
+                {
+                    foreach (var area in ViewBag.Areas)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="input-group mb-3">
+                                <div class="input-group-text">
+                                    <input class="form-check-input mt-0"
+                                           type="checkbox"
+                                           name="ListAreaIds"
+                                           value="@area.Id"
+                                           id="area_@area.Id"
+                                    @(Model.ListAreaIds != null && Model.ListAreaIds.Contains(area.Id) ? "checked" : "") />
+                                </div>
+                                <label class="form-control bg-white" for="area_@area.Id">
+                                    @area.Name
+                                </label>
+                            </div>
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted mb-0 small">Nenhuma área disponível para seleção.</p>
+                }
+            </div>
+        </div>
     </div>
     <div class="mb-3 d-grid gap-2">
         <button type="submit" class="btn btn-primary">Edit</button>

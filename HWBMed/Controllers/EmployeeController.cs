@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxTokenParser;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HWBMed.Controllers
@@ -14,13 +16,14 @@ namespace HWBMed.Controllers
         private readonly IUserRepo _userRepo;
         private readonly IProfileRepo _profileRepo;
         private readonly IEmployeeRepo _employeeRepo;
-        
-        public EmployeeController(IUserRepo userRepo, IProfileRepo profileRepo, IEmployeeRepo employeeRepo)
+        private readonly IAreaRepo _areaRepo;
+
+        public EmployeeController(IUserRepo userRepo, IProfileRepo profileRepo, IEmployeeRepo employeeRepo, IAreaRepo areaRepo)
         {
             _userRepo = userRepo;
-            _profileRepo = profileRepo;
-            
+            _profileRepo = profileRepo;            
             _employeeRepo = employeeRepo;
+            _areaRepo = areaRepo;
         }
         public IActionResult Index()
         {
@@ -33,6 +36,7 @@ namespace HWBMed.Controllers
             if (NIF is null) NotFound();
             var userDB = _userRepo.FindNIF(NIF);
             ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+            ViewData["Areas"] = _areaRepo.All();
             return View(
                 new EmployeeCreateViewModel                
                 {
@@ -51,30 +55,33 @@ namespace HWBMed.Controllers
                 if (employeeModel is null)
                 {
                     TempData["ErrorMenssage"] = "Ocorreu algum erro!";
+                    ViewData["Areas"] = _areaRepo.All();
                     ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
                     return View(employeeModel);
                 }
-
-                if (ModelState.GetFieldValidationState("Name") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid
-                    && ModelState.GetFieldValidationState("NIF") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid
-                    && ModelState.GetFieldValidationState("Email") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid
-                    && ModelState.GetFieldValidationState("Password") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid
-                    && ModelState.GetFieldValidationState("ProfileID") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid
-                    && ModelState.GetFieldValidationState("UserID") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid)
+                if (employeeModel.ListAreaIds == null || !employeeModel.ListAreaIds.Any())
+                {
+                    ModelState.AddModelError("ListAreaIds", "Selecione pelo menos uma área de atuação.");
+                    ViewData["Areas"] = _areaRepo.All();
+                    ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+                    return View(employeeModel);
+                }
+                ModelState.Remove("Id");
+                if(ModelState.IsValid)
                 {
                     var result = await _employeeRepo.AddAsync(employeeModel);
                     if(!result.Succeeded)
                     {
                         TempData["ErrorMenssage"] = $"Algo deu errado!{string.Join(", ", result.Errors.Select(e => e.Description))}";
+                        ViewData["Areas"] = _areaRepo.All();
                         ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
                         return View(employeeModel);
                     }
                     TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
                     return RedirectToAction("Index", "User");
-                    
-                    
                 }
                 ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+                ViewData["Areas"] = _areaRepo.All();
                 return View(employeeModel);
             }
             catch (Exception ex)
@@ -87,10 +94,14 @@ namespace HWBMed.Controllers
         {
             Employee employee = _employeeRepo.FindId(id);
             ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
-            return View(new EmployeeCreateViewModel            {
+            ViewData["Areas"] = _areaRepo.All();
+
+            return View(new EmployeeCreateViewModel
+            {
                 Name = employee.User.Name,
                 NIF = employee.User.NIF,
                 PhoneNumber = employee.PhoneNumber,
+                ListAreaIds = employee.EmployeeAreas.Select(e => e.IdArea).ToList(),
                 Email = employee.Email!,
                 UserID = employee.IdUser,
                 ProfileID = employee.IdProfile
@@ -101,38 +112,37 @@ namespace HWBMed.Controllers
         {
             try
             {
-                if (ModelState.GetFieldValidationState("Name") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid
-                    && ModelState.GetFieldValidationState("NIF") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid
-                    && ModelState.GetFieldValidationState("Email") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid
-                    && ModelState.GetFieldValidationState("Id") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid
-                    && ModelState.GetFieldValidationState("ProfileID") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid
-                    && ModelState.GetFieldValidationState("UserID") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid)
+                ModelState.Remove("Password");
+
+                if (!ModelState.IsValid)
                 {
-                    var result = await _employeeRepo.UpdateAsync(employeeModel);
-                    if (!result.Succeeded)
-                    {
-                        TempData["ErrorMenssage"] = $"Algo deu errado no password!{string.Join(", ", result.Errors.Select(e => e.Description))}";
-                        ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
-                        return View(employeeModel);
-                    }
-                    if (ModelState.GetFieldValidationState("Password") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid)
-                    {
-                        result = await _employeeRepo.UpadatePassAsync(employeeModel);
-                        if (!result.Succeeded)
-                        {
-                            TempData["ErrorMenssage"] = $"Algo deu errado!{string.Join(", ", result.Errors.Select(e => e.Description))}";
-                            ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
-                            return View(employeeModel);
-                        }
-                    }
-                    TempData["SuccessMessage"] = $"Atualizado com sucesso!";
-                    return RedirectToAction("index");
+                    ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+                    ViewData["Areas"] = _areaRepo.All();
+                    return View(employeeModel);
                 }
-                return View(employeeModel);
+
+                if (employeeModel.ListAreaIds == null || !employeeModel.ListAreaIds.Any())
+                {
+                    ModelState.AddModelError("ListAreaIds", "Selecione pelo menos uma área de atuaçãoW.");
+                    ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+                    ViewData["Areas"] = _areaRepo.All();
+                    return View(employeeModel);
+                }
+                
+                var result = await _employeeRepo.UpdateAsync(employeeModel);
+                if (!result.Succeeded)
+                {
+                    TempData["ErrorMessage"] = $"{string.Join(", ", result.Errors.Select(e => e.Description))}";
+                    ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+                    ViewData["Areas"] = _areaRepo.All();
+                    return View(employeeModel);
+                }
+                TempData["SuccessMessage"] = $"Atualizado com sucesso!";
+                return RedirectToAction("index");                
             }
             catch (Exception ex)
             {
-                TempData["ErrorMenssage"] = $"Algo deu errado!: {ex.Message}";
+                TempData["ErrorMessage"] = $"Algo deu errado!: {ex.Message}";
                 return RedirectToAction("index");
             }
         }

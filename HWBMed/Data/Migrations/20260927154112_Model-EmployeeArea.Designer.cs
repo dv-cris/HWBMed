@@ -4,6 +4,7 @@ using HWBMed.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HWBMed.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260927154112_Model-EmployeeArea")]
+    partial class ModelEmployeeArea
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,16 +77,11 @@ namespace HWBMed.Data.Migrations
                     b.Property<decimal>("Discount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("EmployeeId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
 
                     b.ToTable("Profiles");
                 });
@@ -366,7 +364,9 @@ namespace HWBMed.Data.Migrations
                     b.Property<int>("IdUser")
                         .HasColumnType("int");
 
-                    b.HasIndex("IdProfile");
+                    b.HasIndex("IdProfile")
+                        .IsUnique()
+                        .HasFilter("[IdProfile] IS NOT NULL");
 
                     b.HasIndex("IdUser")
                         .IsUnique()
@@ -390,15 +390,6 @@ namespace HWBMed.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Area");
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("HWBMed.Models.Profile", b =>
-                {
-                    b.HasOne("HWBMed.Models.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId");
 
                     b.Navigation("Employee");
                 });
@@ -457,8 +448,8 @@ namespace HWBMed.Data.Migrations
             modelBuilder.Entity("HWBMed.Models.Employee", b =>
                 {
                     b.HasOne("HWBMed.Models.Profile", "Profile")
-                        .WithMany()
-                        .HasForeignKey("IdProfile")
+                        .WithOne("Employee")
+                        .HasForeignKey("HWBMed.Models.Employee", "IdProfile")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -476,6 +467,11 @@ namespace HWBMed.Data.Migrations
             modelBuilder.Entity("HWBMed.Models.Area", b =>
                 {
                     b.Navigation("EmployeeAreas");
+                });
+
+            modelBuilder.Entity("HWBMed.Models.Profile", b =>
+                {
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HWBMed.Models.User", b =>

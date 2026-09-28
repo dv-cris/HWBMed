@@ -9,8 +9,6 @@ namespace HWBMed.repo
         IEnumerable<Employee> All();
         Employee FindId(string id);
         Task<IdentityResult> AddAsync(EmployeeCreateViewModel employee);
-
-        Task<IdentityResult> UpadatePassAsync(EmployeeCreateViewModel employeeModel);
         Task<IdentityResult> UpdateAsync(EmployeeCreateViewModel employeeModel);
         bool Delete(string id);
     }
