@@ -29,13 +29,13 @@ namespace HWBMed.Controllers
                 var userDB = _userRepo.FindUtente(user.UtenteNumber);
                 if(userDB != null)
                 {
-                    TempData["ErrorMenssage"] = "Utente já cadastrado";
+                    TempData["ErrorMessage"] = "Utente já cadastrado";
                     return View(user);
                 }
                 userDB = _userRepo.FindNIF(user.NIF);
                 if (userDB != null)
                 {
-                    TempData["ErrorMenssage"] = "NIF já cadastrado";
+                    TempData["ErrorMessage"] = "NIF já cadastrado";
                     return View(user);
                 }
 
@@ -49,7 +49,7 @@ namespace HWBMed.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMenssage"] = $"Algo deu errado! {ex.Message}";
+                TempData["ErrorMessage"] = $"Algo deu errado! {ex.Message}";
                 return RedirectToAction("index");
             }
         }
@@ -73,7 +73,7 @@ namespace HWBMed.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMenssage"] = $"Algo deu errado!: {ex.Message}";
+                TempData["ErrorMessage"] = $"Algo deu errado!: {ex.Message}";
                 return RedirectToAction("index");
             }
         }
@@ -89,12 +89,12 @@ namespace HWBMed.Controllers
             {
                 bool ConfirmDelete = _userRepo.Delete(id);
                 if (ConfirmDelete) TempData["SuccessMessage"] = $"Excluido com sucesso!";
-                else TempData["ErrorMenssage"] = $"Algo deu errado!";
+                else TempData["ErrorMessage"] = $"Algo deu errado!";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMenssage"] = $"Algo deu errado!: {ex.Message}";
+                TempData["ErrorMessage"] = $"Algo deu errado!: {ex.Message}";
                 return RedirectToAction("index");
             }
         }

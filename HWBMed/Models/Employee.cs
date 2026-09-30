@@ -8,7 +8,6 @@ namespace HWBMed.Models
         public User User { get; set; }
         public int IdProfile { get; set; }
         public Profile Profile { get; set; }
-
         public ICollection<EmployeeArea> EmployeeAreas { get; set; } = new List<EmployeeArea>();
     }
 }

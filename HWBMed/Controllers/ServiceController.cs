@@ -1,67 +1,74 @@
 ﻿using HWBMed.Models;
+using HWBMed.Models.ViewModel;
 using HWBMed.repo;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HWBMed.Controllers
 {
-    public class AreaController : Controller
+    public class ServiceController : Controller
     {
+        private readonly IServiceRepo _serviceRepo;
         private readonly IAreaRepo _areaRepo;
-        public AreaController(IAreaRepo areaRepo)
+        public ServiceController(IServiceRepo serviceRepo, IAreaRepo areaRepo)
         {
+            _serviceRepo = serviceRepo;
             _areaRepo = areaRepo;
         }
         public IActionResult Index()
         {
-            var areas = _areaRepo.All();
-            return View(areas);
+            var service = _serviceRepo.All();
+            return View(service);
         }
         public IActionResult Create()
         {
+            ViewData["Areas"] = new SelectList(_areaRepo.All(), "Id", "Name");
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Area area)
+        public IActionResult Create(ServiceCreateViewModel serviceModel)
         {
             try
             {
-                var areaBD = _areaRepo.FindName(area.Name);
-                if (areaBD != null) {
-                    TempData["ErrorMessage"] = "Area já cadastrada";
-                    return View(area);
-                }
                 if (ModelState.IsValid)
                 {
-                    _areaRepo.Add(area);
+                    _serviceRepo.Add(serviceModel);
                     TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
                     return RedirectToAction("index");
                 }
-                return View(area);
+                ViewData["Areas"] = new SelectList(_areaRepo.All(), "Id", "Name");
+                return View(serviceModel);
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Algo deu errado! {ex.Message}";
                 return RedirectToAction("index");
             }
-
         }
         public IActionResult Edit(int id)
         {
-            Area area = _areaRepo.FindId(id);
-            return View(area);
+            var service = _serviceRepo.FindId(id);
+            return View(new ServiceCreateViewModel
+            {
+                Name = service.Name,
+                Price = service.Price,
+                IVA = service.IVA,
+                IdArea = service.IdArea,
+                Area = service.Area.Name
+            });
         }
         [HttpPost]
-        public IActionResult Edit(Area area)
+        public IActionResult Edit(ServiceCreateViewModel service)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _areaRepo.Update(area);
+                    _serviceRepo.Update(service);
                     TempData["SuccessMessage"] = $"Atualizado com sucesso!";
                     return RedirectToAction("index");
                 }
-                return View(area);
+                return View(service);
             }
             catch (Exception ex)
             {
@@ -69,18 +76,17 @@ namespace HWBMed.Controllers
                 return RedirectToAction("index");
             }
         }
-        [HttpGet]
         public IActionResult Delete(int id)
         {
-            Area area = _areaRepo.FindId(id);
-            return View(area);
+            Service service = _serviceRepo.FindId(id);
+            return View(service);
         }
         [HttpPost]
         public IActionResult ExeDelete(int id)
         {
             try
             {
-                bool ConfirmDelete = _areaRepo.Delete(id);
+                bool ConfirmDelete = _serviceRepo.Delete(id);
                 if (ConfirmDelete) TempData["SuccessMessage"] = $"Excluido com sucesso!";
                 else TempData["ErrorMessage"] = $"Algo deu errado!";
                 return RedirectToAction("Index");
@@ -90,7 +96,6 @@ namespace HWBMed.Controllers
                 TempData["ErrorMessage"] = $"Algo deu errado!: {ex.Message}";
                 return RedirectToAction("index");
             }
-
         }
     }
 }

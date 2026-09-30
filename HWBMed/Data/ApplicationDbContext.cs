@@ -11,6 +11,7 @@ namespace HWBMed.Data
         public DbSet<User> Users { get; set; } = default!;
         public DbSet<Employee> Employees { get; set; } = default!;
         public DbSet<EmployeeArea> employeeAreas { get; set; } = default!;
+        public DbSet<Service> Services { get; set; } = default!;
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -19,12 +20,12 @@ namespace HWBMed.Data
                 .WithOne(e => e.User)
                 .HasForeignKey<Employee>(e => e.IdUser)
                 .IsRequired();
+
             builder.Entity<Profile>()
                 .HasMany<Employee>()
                 .WithOne(e => e.Profile)
                 .HasForeignKey(e => e.IdProfile)
-                .IsRequired();
-            
+                .IsRequired();            
 
             builder.Entity<EmployeeArea>()
                 .HasOne(ea => ea.Employee)
@@ -35,6 +36,12 @@ namespace HWBMed.Data
                 .HasOne(ea => ea.Area)
                 .WithMany(a => a.EmployeeAreas)
                 .HasForeignKey(ea => ea.IdArea)
+                .IsRequired();
+
+            builder.Entity<Area>()
+                .HasMany<Service>(a=>a.Services)
+                .WithOne(e => e.Area)
+                .HasForeignKey(e => e.IdArea)
                 .IsRequired();
 
         }

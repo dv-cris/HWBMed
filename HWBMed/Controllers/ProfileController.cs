@@ -28,7 +28,7 @@ namespace HWBMed.Controllers
                 var profileDB = _profileRepo.FindName(profile.Name);
                 if (profileDB != null)
                 {
-                    TempData["ErrorMenssage"] = "Perfil já cadastrado!";
+                    TempData["ErrorMessage"] = "Perfil já cadastrado!";
                     return View(profile);
                 }
 
@@ -42,7 +42,7 @@ namespace HWBMed.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMenssage"] = $"Algo deu errado! {ex.Message}";
+                TempData["ErrorMessage"] = $"Algo deu errado! {ex.Message}";
                 return RedirectToAction("index");
             }            
         }
@@ -67,7 +67,7 @@ namespace HWBMed.Controllers
             }
             catch(Exception ex)
             {
-                TempData["ErrorMenssage"] = $"Algo deu errado!: {ex.Message}";
+                TempData["ErrorMessage"] = $"Algo deu errado!: {ex.Message}";
                 return RedirectToAction("index");
             }
         }
@@ -83,12 +83,12 @@ namespace HWBMed.Controllers
             try {
                 bool ConfirmDelete = _profileRepo.Delete(id);
                 if(ConfirmDelete) TempData["SuccessMessage"] = $"Excluido com sucesso!";
-                else TempData["ErrorMenssage"] = $"Algo deu errado!";
+                else TempData["ErrorMessage"] = $"Algo deu errado!";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMenssage"] = $"Algo deu errado!: {ex.Message}";
+                TempData["ErrorMessage"] = $"Algo deu errado!: {ex.Message}";
                 return RedirectToAction("index");
             }
         }

@@ -26,6 +26,7 @@ namespace HWBMed
             builder.Services.AddScoped<IAreaRepo, AreaRepo>();
             builder.Services.AddScoped<IUserRepo, UserRepo>();
             builder.Services.AddScoped<IEmployeeRepo, EmployeeRepo>();
+            builder.Services.AddScoped<IServiceRepo, ServiceRepo>();
 
             var app = builder.Build();
 

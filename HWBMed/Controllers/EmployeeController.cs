@@ -54,7 +54,7 @@ namespace HWBMed.Controllers
             {
                 if (employeeModel is null)
                 {
-                    TempData["ErrorMenssage"] = "Ocorreu algum erro!";
+                    TempData["ErrorMessage"] = "Ocorreu algum erro!";
                     ViewData["Areas"] = _areaRepo.All();
                     ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
                     return View(employeeModel);
@@ -72,7 +72,7 @@ namespace HWBMed.Controllers
                     var result = await _employeeRepo.AddAsync(employeeModel);
                     if(!result.Succeeded)
                     {
-                        TempData["ErrorMenssage"] = $"Algo deu errado!{string.Join(", ", result.Errors.Select(e => e.Description))}";
+                        TempData["ErrorMessage"] = $"Algo deu errado!{string.Join(", ", result.Errors.Select(e => e.Description))}";
                         ViewData["Areas"] = _areaRepo.All();
                         ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
                         return View(employeeModel);
@@ -86,7 +86,7 @@ namespace HWBMed.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMenssage"] = $"Algo deu errado! {ex.Message}";
+                TempData["ErrorMessage"] = $"Algo deu errado! {ex.Message}";
                 return RedirectToAction("index");
             }
         }
@@ -159,12 +159,12 @@ namespace HWBMed.Controllers
             {
                 bool ConfirmDelete = _employeeRepo.Delete(id);
                 if (ConfirmDelete) TempData["SuccessMessage"] = $"Excluido com sucesso!";
-                else TempData["ErrorMenssage"] = $"Algo deu errado!";
+                else TempData["ErrorMessage"] = $"Algo deu errado!";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMenssage"] = $"Algo deu errado!: {ex.Message}";
+                TempData["ErrorMessage"] = $"Algo deu errado!: {ex.Message}";
                 return RedirectToAction("index");
             }
         }

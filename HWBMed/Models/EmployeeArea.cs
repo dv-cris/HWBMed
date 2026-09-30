@@ -7,9 +7,7 @@ namespace HWBMed.Models
         public int Id { get; set; }
         public string IdEmployee { get; set; }
         public Employee Employee { get; set; }
-
         public int IdArea { get; set; }
-
         public Area Area { get; set; }
     }
 }

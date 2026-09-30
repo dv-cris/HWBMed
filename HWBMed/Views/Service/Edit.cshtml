@@ -1,0 +1,52 @@
+﻿@model HWBMed.Models.ViewModel.ServiceCreateViewModel
+@{
+    ViewData["Title"] = "Edit Service";
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
+        @TempData["ErrorMessage"]
+    </div>
+}
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+</div>
+<form asp-controller="Service" asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="input-group mb-3">
+        <label asp-for="Name" class="input-group-text"></label>
+        <label class="input-group-text">@Model.Name</label>
+        <input type="hidden" class="form-control" asp-for="Name">        
+        <span asp-validation-for="Name" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="Price" class="input-group-text"></label>
+        <input type="number" step="any" class="form-control" asp-for="Price">
+        <span asp-validation-for="Price" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="IVA" class="input-group-text"></label>
+        <input type="number" class="form-control" asp-for="IVA">
+        <span asp-validation-for="IVA" class="input-group-text text-danger"></span>
+    </div>
+    <div class="input-group mb-3">
+        <label asp-for="Area" class="input-group-text"></label>
+        <input type="hidden" class="form-control" asp-for="IdArea"/>
+        <label class="input-group-text">@Model.Area</label>
+        <span asp-validation-for="IdArea" class="input-group-text text-danger"></span>
+    </div>
+    <div class="mb-3 d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Edit</button>
+        <a class="btn btn-secondary" role="button" asp-controller="Service" asp-action="Index">List Services</a>
+    </div>
+</form>
+

@@ -10,11 +10,11 @@
     </div>
 }
 
-@if (TempData["ErrorMenssage"] != null)
+@if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger" role="alert">
         <button type="button" class="btn btn-close btn-sm close-alert" aria-label="Close alert"></button>
-        @TempData["ErrorMenssage"]
+        @TempData["ErrorMessage"]
     </div>
 }
 <div class="text-center">
@@ -51,7 +51,7 @@
         <label asp-for="PhoneNumber" class="input-group-text"></label>
         @if (!string.IsNullOrWhiteSpace(Model.PhoneNumber))
         {
-            <input type="text" readonly class="form-control" asp-for="PhoneNumber">
+            <input type="number" readonly class="form-control" asp-for="PhoneNumber">
         }
         else
         {
@@ -73,7 +73,7 @@
     </div>
     <div class="input-group mb-3">
         <label asp-for="Password" class="input-group-text"></label>
-        <input type="text" class="form-control" asp-for="Password">
+        <input type="password" class="form-control" asp-for="Password">
         <span asp-validation-for="Password" class="input-group-text text-danger"></span>
     </div>
     <div class="input-group mb-3">
