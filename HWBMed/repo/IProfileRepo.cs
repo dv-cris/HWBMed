@@ -3,11 +3,11 @@ namespace HWBMed.repo
 {
     public interface IProfileRepo
     {
-        List<Profile> All();
-        Profile FindId(int id);
-        Profile FindName(string name);
-        Profile Add(Profile profile);
-        Profile Update(Profile profile);
-        bool Delete(int id);
+        Task<List<Profile>> AllAsync();
+        Task<Profile?> FindIdAsync(string id);
+        Task<Profile?> FindNameAsync(string name);
+        Task<Profile> AddAsync(Profile profile);
+        Task<Profile> UpdateAsync(Profile profile);
+        Task<bool> DeleteAsync(string id);
     }
 }

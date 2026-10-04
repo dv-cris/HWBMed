@@ -25,18 +25,18 @@ namespace HWBMed.Controllers
         {
             try
             {
-                var areaBD = _areaRepo.FindName(area.Name);
+                var areaBD = _areaRepo.FindName(area.Name.ToUpper());
                 if (areaBD != null) {
                     TempData["ErrorMessage"] = "Area já cadastrada";
                     return View(area);
-                }
-                if (ModelState.IsValid)
-                {
-                    _areaRepo.Add(area);
-                    TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
-                    return RedirectToAction("index");
-                }
-                return View(area);
+                }                
+                if (!ModelState.IsValid) return View(area);
+                
+                area.Name = area.Name.ToUpper();
+                _areaRepo.Add(area);
+                TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
+                return RedirectToAction("index");
+                
             }
             catch (Exception ex)
             {
@@ -55,13 +55,12 @@ namespace HWBMed.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    _areaRepo.Update(area);
-                    TempData["SuccessMessage"] = $"Atualizado com sucesso!";
-                    return RedirectToAction("index");
-                }
-                return View(area);
+                if (!ModelState.IsValid) return View(area);
+
+                _areaRepo.Update(area);
+                TempData["SuccessMessage"] = $"Atualizado com sucesso!";
+                return RedirectToAction("index");
+
             }
             catch (Exception ex)
             {
@@ -81,8 +80,8 @@ namespace HWBMed.Controllers
             try
             {
                 bool ConfirmDelete = _areaRepo.Delete(id);
-                if (ConfirmDelete) TempData["SuccessMessage"] = $"Excluido com sucesso!";
-                else TempData["ErrorMessage"] = $"Algo deu errado!";
+                if (!ConfirmDelete) TempData["ErrorMessage"] = $"Algo deu errado!";
+                else TempData["SuccessMessage"] = $"Excluido com sucesso!"; 
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

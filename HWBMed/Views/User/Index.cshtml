@@ -1,7 +1,10 @@
-﻿@model IEnumerable<HWBMed.Models.User>
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model IEnumerable<HWBMed.Models.User>
+
+@inject IHtmlLocalizer<SharedResource> SharedResource
 
 @{
-    ViewData["Title"] = "User list";
+    ViewData["Title"] = @SharedResource["User list"];
 }
 @if (TempData["SuccessMessage"] != null)
 {
@@ -21,7 +24,7 @@
 
 <div class="text-center">
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-        <a class="btn btn-primary" role="button" asp-controller="User" asp-action="Create">Create</a>
+        <a class="btn btn-primary" role="button" asp-controller="User" asp-action="Create">@SharedResource["Create new"] @SharedResource["User"]</a>
     </div>
     <br />
     <h1 class="display-4">@ViewData["Title"]</h1>
@@ -47,7 +50,7 @@
                 <a role=""button""
                    class=""btn btn-success""
                    href=""{Url.Action("Create", "Employee", new { NIF = model.NIF })}"">
-                    Create login
+                    Create New login
                 </a>
 
                 <a role=""button""

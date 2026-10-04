@@ -1,52 +1,53 @@
 ﻿using HWBMed.Data;
 using HWBMed.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HWBMed.repo
 {
     public class ProfileRepo : IProfileRepo
     {
         private readonly ApplicationDbContext _context;
-        public ProfileRepo(ApplicationDbContext context)
+        private readonly RoleManager<Profile> _roleManager;
+        public ProfileRepo(ApplicationDbContext context, RoleManager<Profile> roleManager)
         {
             _context = context;
+            _roleManager = roleManager;
         }
-        public Profile Add(Profile profile)
+        public async Task<Profile> AddAsync(Profile profile)
         {
-            _context.Profiles.Add(profile);
-            _context.SaveChanges();
+            await _roleManager.CreateAsync(profile);            
             return profile;
         }
-        public Profile Update(Profile profile)
+        public async Task<Profile> UpdateAsync(Profile profile)
         {
-            Profile profileDB = FindId(profile.Id);
+            Profile profileDB = await FindIdAsync(profile.Id);
             if (profileDB == null) throw new Exception("Houve um erro na atualização");
             profileDB.Name = profile.Name;
             profileDB.Discount = profile.Discount;
-            _context.Profiles.Update(profileDB);
-            _context.SaveChanges();
+            await _roleManager.UpdateAsync(profileDB);            
             return profileDB;
         }
-        public bool Delete(int id)
+        public async Task<bool> DeleteAsync(string id)
         {
-            Profile profileDB = FindId(id);
+            Profile profileDB = await FindIdAsync(id);
             if (profileDB == null) throw new Exception("Houve um erro na atualização");
-            _context.Profiles.Remove(profileDB);
-            _context.SaveChanges();
+            await _roleManager.DeleteAsync(profileDB);            
             return true;
         }
-        public List<Profile> All()
+        public async Task<List<Profile>> AllAsync()
         {
-            return _context.Profiles.ToList();
-        }
-        
-        public Profile FindId(int id)
-        {
-            return _context.Profiles.FirstOrDefault(x => x.Id == id);
+            return await _context.Profiles.ToListAsync();
         }
 
-        public Profile FindName(string name)
+        public async Task<Profile> FindIdAsync(string id)
         {
-            return _context.Profiles.FirstOrDefault(x => x.Name == name);
+            return await _context.Profiles.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Profile> FindNameAsync(string name)
+        {
+            return await _context.Profiles.FirstOrDefaultAsync(x => x.Name == name);
         }
     }
 }

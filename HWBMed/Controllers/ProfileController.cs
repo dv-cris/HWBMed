@@ -11,9 +11,9 @@ namespace HWBMed.Controllers
         {
             _profileRepo = profileRepo;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
-            var profiles = _profileRepo.All();
+            var profiles = await _profileRepo.AllAsync();
             return View(profiles);
         }
         public IActionResult Create()
@@ -21,24 +21,22 @@ namespace HWBMed.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Profile profile)
+        public async Task<IActionResult> CreateAsync(Profile profile)
         {
             try
             {
-                var profileDB = _profileRepo.FindName(profile.Name);
+                var profileDB = await _profileRepo.FindNameAsync(profile.Name);
                 if (profileDB != null)
                 {
                     TempData["ErrorMessage"] = "Perfil já cadastrado!";
                     return View(profile);
                 }
+                if (!ModelState.IsValid) return View(profile);
 
-                if (ModelState.IsValid)
-                {
-                    _profileRepo.Add(profile);
-                    TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
-                    return RedirectToAction("index");
-                }
-                return View(profile);
+                await _profileRepo.AddAsync(profile);
+                TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
+                return RedirectToAction("index");
+                
             }
             catch (Exception ex)
             {
@@ -47,23 +45,22 @@ namespace HWBMed.Controllers
             }            
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> EditAsync(string id)
         {
-            Profile profile = _profileRepo.FindId(id);
+            Profile profile = await _profileRepo.FindIdAsync(id);
             return View(profile);
         }
         [HttpPost]
-        public IActionResult Edit(Profile profile)
+        public async Task<IActionResult> EditAsync(Profile profile)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    _profileRepo.Update(profile);
-                    TempData["SuccessMessage"] = $"Atualizado com sucesso!";
-                    return RedirectToAction("index");
-                }
-                return View(profile);
+                if (!ModelState.IsValid) return View(profile);                 
+                
+                await _profileRepo.UpdateAsync(profile);
+                TempData["SuccessMessage"] = $"Atualizado com sucesso!";
+                return RedirectToAction("index");
+
             }
             catch(Exception ex)
             {
@@ -72,18 +69,18 @@ namespace HWBMed.Controllers
             }
         }
         [HttpGet]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(string id)
         {
-            Profile profile = _profileRepo.FindId(id);
+            Profile profile = await _profileRepo.FindIdAsync(id);
             return View(profile);
         }
         [HttpPost]
-        public IActionResult ExeDelete(int id)
+        public async Task<IActionResult> ExeDeleteAsync(string id)
         {
             try {
-                bool ConfirmDelete = _profileRepo.Delete(id);
-                if(ConfirmDelete) TempData["SuccessMessage"] = $"Excluido com sucesso!";
-                else TempData["ErrorMessage"] = $"Algo deu errado!";
+                bool ConfirmDelete = await _profileRepo.DeleteAsync(id);
+                if(!ConfirmDelete) TempData["ErrorMessage"] = $"Algo deu errado!";
+                else TempData["SuccessMessage"] = $"Excluido com sucesso!"; 
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

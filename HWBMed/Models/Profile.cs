@@ -1,13 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace HWBMed.Models
 {
-    public class Profile
+    public class Profile :IdentityRole
     {
-        public int Id { get; set; }
+
+        public override string Id { get; set; } = Guid.NewGuid().ToString();
         [Display(Name = "Name")]
         [Required(ErrorMessage = "RequiredErrorMessage")]
-        public string Name { get; set; }
+        public override string Name { get; set; }
         [Display(Name = "Discount")]
         [Required(ErrorMessage = "RequiredErrorMessage")]
         public decimal Discount { get; set; }

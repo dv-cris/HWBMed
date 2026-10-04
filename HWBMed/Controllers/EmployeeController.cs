@@ -1,13 +1,8 @@
 ﻿using HWBMed.Models;
 using HWBMed.Models.ViewModel;
 using HWBMed.repo;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.CodeAnalysis.CSharp.SyntaxTokenParser;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HWBMed.Controllers
 {
@@ -21,7 +16,7 @@ namespace HWBMed.Controllers
         public EmployeeController(IUserRepo userRepo, IProfileRepo profileRepo, IEmployeeRepo employeeRepo, IAreaRepo areaRepo)
         {
             _userRepo = userRepo;
-            _profileRepo = profileRepo;            
+            _profileRepo = profileRepo;
             _employeeRepo = employeeRepo;
             _areaRepo = areaRepo;
         }
@@ -31,14 +26,20 @@ namespace HWBMed.Controllers
             return View(userDB);
         }
 
-        public IActionResult Create(string NIF)
+        public async Task<IActionResult> CreateAsync(string NIF)
         {
             if (NIF is null) NotFound();
             var userDB = _userRepo.FindNIF(NIF);
-            ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+            if (userDB.Employee != null)
+            {
+                TempData["ErrorMessage"] = "Login já cadastrado!";
+                return RedirectToAction("Index", "User");
+            }
+            var profiles = await _profileRepo.AllAsync();
+            ViewData["Profiles"] = new SelectList(profiles, "Id", "Name");
             ViewData["Areas"] = _areaRepo.All();
             return View(
-                new EmployeeCreateViewModel                
+                new EmployeeCreateViewModel()
                 {
                     Name = userDB.Name,
                     NIF = userDB.NIF,
@@ -52,37 +53,50 @@ namespace HWBMed.Controllers
         {
             try
             {
+                User user = _userRepo.FindNIF(employeeModel.NIF);
+                if (user.Employee != null || !employeeModel.ListAreaIds.Any())
+                {
+                    TempData["ErrorMessage"] = $"Usuário já cadastrado!";
+                    return RedirectToAction("Index", "User");
+                }
                 if (employeeModel is null)
                 {
                     TempData["ErrorMessage"] = "Ocorreu algum erro!";
                     ViewData["Areas"] = _areaRepo.All();
-                    ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+                    var profiles = await _profileRepo.AllAsync();
+                    ViewData["Profiles"] = new SelectList(profiles, "Id", "Name");
                     return View(employeeModel);
                 }
                 if (employeeModel.ListAreaIds == null || !employeeModel.ListAreaIds.Any())
                 {
                     ModelState.AddModelError("ListAreaIds", "Selecione pelo menos uma área de atuação.");
                     ViewData["Areas"] = _areaRepo.All();
-                    ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+                    var profiles = await _profileRepo.AllAsync();
+                    ViewData["Profiles"] = new SelectList(profiles, "Id", "Name");
                     return View(employeeModel);
                 }
+                
                 ModelState.Remove("Id");
-                if(ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    var result = await _employeeRepo.AddAsync(employeeModel);
-                    if(!result.Succeeded)
-                    {
-                        TempData["ErrorMessage"] = $"Algo deu errado!{string.Join(", ", result.Errors.Select(e => e.Description))}";
-                        ViewData["Areas"] = _areaRepo.All();
-                        ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
-                        return View(employeeModel);
-                    }
-                    TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
-                    return RedirectToAction("Index", "User");
+                    var profiles = await _profileRepo.AllAsync();
+                    ViewData["Profiles"] = new SelectList(profiles, "Id", "Name");
+                    ViewData["Areas"] = _areaRepo.All();
+                    return View(employeeModel);
                 }
-                ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
-                ViewData["Areas"] = _areaRepo.All();
-                return View(employeeModel);
+
+                var result = await _employeeRepo.AddAsync(employeeModel);
+                if (!result.Succeeded)
+                {
+                    TempData["ErrorMessage"] = $"Algo deu errado!{string.Join(", ", result.Errors.Select(e => e.Description))}";
+                    ViewData["Areas"] = _areaRepo.All();
+                    var profiles = await _profileRepo.AllAsync();
+                    ViewData["Profiles"] = new SelectList(profiles, "Id", "Name");
+                    return View(employeeModel);
+                }
+                TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
+                return RedirectToAction("Index", "User");
+                
             }
             catch (Exception ex)
             {
@@ -90,13 +104,13 @@ namespace HWBMed.Controllers
                 return RedirectToAction("index");
             }
         }
-        public IActionResult Edit(string id)
+        public async Task<IActionResult> EditAsync(string id)
         {
             Employee employee = _employeeRepo.FindId(id);
-            ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+            var profiles = await _profileRepo.AllAsync();
+            ViewData["Profiles"] = new SelectList(profiles, "Id", "Name");
             ViewData["Areas"] = _areaRepo.All();
-
-            return View(new EmployeeCreateViewModel
+            return View(new EmployeeCreateViewModel()
             {
                 Name = employee.User.Name,
                 NIF = employee.User.NIF,
@@ -113,10 +127,10 @@ namespace HWBMed.Controllers
             try
             {
                 ModelState.Remove("Password");
-
                 if (!ModelState.IsValid)
                 {
-                    ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+                    var profiles = await _profileRepo.AllAsync();
+                    ViewData["Profiles"] = new SelectList(profiles, "Id", "Name");
                     ViewData["Areas"] = _areaRepo.All();
                     return View(employeeModel);
                 }
@@ -124,21 +138,22 @@ namespace HWBMed.Controllers
                 if (employeeModel.ListAreaIds == null || !employeeModel.ListAreaIds.Any())
                 {
                     ModelState.AddModelError("ListAreaIds", "Selecione pelo menos uma área de atuaçãoW.");
-                    ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+                    var profiles = await _profileRepo.AllAsync();
+                    ViewData["Profiles"] = new SelectList(profiles, "Id", "Name");
                     ViewData["Areas"] = _areaRepo.All();
                     return View(employeeModel);
                 }
-                
                 var result = await _employeeRepo.UpdateAsync(employeeModel);
                 if (!result.Succeeded)
                 {
                     TempData["ErrorMessage"] = $"{string.Join(", ", result.Errors.Select(e => e.Description))}";
-                    ViewData["Profiles"] = new SelectList(_profileRepo.All(), "Id", "Name");
+                    var profiles = await _profileRepo.AllAsync();
+                    ViewData["Profiles"] = new SelectList(profiles, "Id", "Name");
                     ViewData["Areas"] = _areaRepo.All();
                     return View(employeeModel);
                 }
                 TempData["SuccessMessage"] = $"Atualizado com sucesso!";
-                return RedirectToAction("index");                
+                return RedirectToAction("index");
             }
             catch (Exception ex)
             {
@@ -158,8 +173,8 @@ namespace HWBMed.Controllers
             try
             {
                 bool ConfirmDelete = _employeeRepo.Delete(id);
-                if (ConfirmDelete) TempData["SuccessMessage"] = $"Excluido com sucesso!";
-                else TempData["ErrorMessage"] = $"Algo deu errado!";
+                if (!ConfirmDelete) TempData["ErrorMessage"] = $"Algo deu errado!";
+                else TempData["SuccessMessage"] = $"Excluido com sucesso!"; 
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

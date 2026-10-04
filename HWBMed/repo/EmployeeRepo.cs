@@ -3,6 +3,7 @@ using HWBMed.Models;
 using HWBMed.Models.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HWBMed.repo
 {
@@ -30,9 +31,11 @@ namespace HWBMed.repo
             var result = await _userManager.CreateAsync(employee, employeeModel.Password);
             if (result.Succeeded)
             {
+                Profile profile = await _context.Profiles.FirstOrDefaultAsync(p => p.Id == employeeModel.ProfileID);
+                await _userManager.AddToRoleAsync(employee, profile.Name);
                 foreach (var areaId in employeeModel.ListAreaIds)
                 {
-                    _context.employeeAreas.Add(new EmployeeArea
+                    _context.employeeAreas.Add(new EmployeeArea()
                     {
                         IdEmployee = employee.Id,
                         IdArea = areaId
@@ -90,7 +93,7 @@ namespace HWBMed.repo
                 _context.employeeAreas.RemoveRange(employeeDB.EmployeeAreas);
                 foreach (var areaId in employeeModel.ListAreaIds)
                 {                    
-                    _context.employeeAreas.Add(new EmployeeArea
+                    _context.employeeAreas.Add(new EmployeeArea()
                     {
                         IdEmployee = employeeDB.Id,
                         IdArea = areaId

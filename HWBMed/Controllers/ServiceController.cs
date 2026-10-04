@@ -30,14 +30,22 @@ namespace HWBMed.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                Area area = _areaRepo.FindId(serviceModel.IdArea);
+                
+                if(area.Services.Any(s => s.Name == serviceModel.Name))
                 {
-                    _serviceRepo.Add(serviceModel);
-                    TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
-                    return RedirectToAction("index");
+                    TempData["ErrorMessage"] = $"O serviço {serviceModel.Name} já é cadastrado!";
+                    return View(serviceModel);
                 }
-                ViewData["Areas"] = new SelectList(_areaRepo.All(), "Id", "Name");
-                return View(serviceModel);
+                
+                if (!ModelState.IsValid)
+                {
+                    ViewData["Areas"] = new SelectList(_areaRepo.All(), "Id", "Name");
+                    return View(serviceModel);
+                }
+                _serviceRepo.Add(serviceModel);
+                TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
+                return RedirectToAction("index");                
             }
             catch (Exception ex)
             {
@@ -48,7 +56,7 @@ namespace HWBMed.Controllers
         public IActionResult Edit(int id)
         {
             var service = _serviceRepo.FindId(id);
-            return View(new ServiceCreateViewModel
+            return View(new ServiceCreateViewModel()
             {
                 Name = service.Name,
                 Price = service.Price,
@@ -62,13 +70,12 @@ namespace HWBMed.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    _serviceRepo.Update(service);
-                    TempData["SuccessMessage"] = $"Atualizado com sucesso!";
-                    return RedirectToAction("index");
-                }
-                return View(service);
+                if (!ModelState.IsValid) return View(service);
+                
+                _serviceRepo.Update(service);
+                TempData["SuccessMessage"] = $"Atualizado com sucesso!";
+                return RedirectToAction("index");
+
             }
             catch (Exception ex)
             {
@@ -87,8 +94,8 @@ namespace HWBMed.Controllers
             try
             {
                 bool ConfirmDelete = _serviceRepo.Delete(id);
-                if (ConfirmDelete) TempData["SuccessMessage"] = $"Excluido com sucesso!";
-                else TempData["ErrorMessage"] = $"Algo deu errado!";
+                if (!ConfirmDelete) TempData["ErrorMessage"] = $"Algo deu errado!";
+                else TempData["SuccessMessage"] = $"Excluido com sucesso!"; 
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

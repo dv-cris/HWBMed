@@ -39,13 +39,12 @@ namespace HWBMed.Controllers
                     return View(user);
                 }
 
-                if (ModelState.IsValid)
-                {
-                    _userRepo.Add(user);
-                    TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
-                    return RedirectToAction("index");
-                }
-                return View(user);
+                if (!ModelState.IsValid) return View(user);
+                
+                _userRepo.Add(user);
+                TempData["SuccessMessage"] = $"Cadastrado com sucesso!";
+                return RedirectToAction("index");
+                
             }
             catch (Exception ex)
             {
@@ -63,13 +62,11 @@ namespace HWBMed.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    _userRepo.Update(user);
-                    TempData["SuccessMessage"] = $"Atualizado com sucesso!";
-                    return RedirectToAction("index");
-                }
-                return View(user);
+                if (!ModelState.IsValid) return View(user);
+
+                _userRepo.Update(user);
+                TempData["SuccessMessage"] = $"Atualizado com sucesso!";
+                return RedirectToAction("index");                
             }
             catch (Exception ex)
             {
@@ -88,8 +85,8 @@ namespace HWBMed.Controllers
             try
             {
                 bool ConfirmDelete = _userRepo.Delete(id);
-                if (ConfirmDelete) TempData["SuccessMessage"] = $"Excluido com sucesso!";
-                else TempData["ErrorMessage"] = $"Algo deu errado!";
+                if (!ConfirmDelete) TempData["ErrorMessage"] = $"Algo deu errado!";
+                else TempData["SuccessMessage"] = $"Excluido com sucesso!"; 
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

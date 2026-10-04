@@ -8,7 +8,7 @@
         public string? PhoneNumber { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public int ProfileID {  get; set; }
+        public string ProfileID {  get; set; }
         public int UserID {  get; set; }
         public List<int> ListAreaIds { get; set; } = new List<int>();
     }

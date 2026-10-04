@@ -1,5 +1,6 @@
 ﻿using HWBMed.Data;
 using HWBMed.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HWBMed.repo
 {
@@ -40,7 +41,10 @@ namespace HWBMed.repo
         }
         public Area FindId(int id)
         {
-            return _context.Areas.FirstOrDefault(x => x.Id == id);
+            return _context.Areas
+                .Include(e => e.Services)
+                .FirstOrDefault(x => x.Id == id);
+            
         }
 
         public Area FindName(string name)
