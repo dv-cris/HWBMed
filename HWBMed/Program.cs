@@ -1,6 +1,7 @@
 using HWBMed.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NToastNotify;
 
 namespace HWBMed
 {
@@ -18,7 +19,14 @@ namespace HWBMed
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews()
+                            .AddNToastNotifyToastr(new ToastrOptions()
+                            {
+                                ProgressBar = true,
+                                PositionClass = ToastPositions.TopLeft,
+                                TimeOut = 5000,
+                                TapToDismiss = true
+                            });
 
             var app = builder.Build();
 

@@ -36,10 +36,7 @@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
-            <script src="~/js/mvc-grid/mvc-grid.js"></script>
-            <script>
-                document.querySelectorAll(".mvc-grid").forEach(element => new MvcGrid(element));
-            </script>
+            
         </main>
     </div>
 
@@ -51,6 +48,11 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/mvc-grid/mvc-grid.js"></script>
+    <script>
+        document.querySelectorAll(".mvc-grid").forEach(element => new MvcGrid(element));
+    </script>
+    @await Component.InvokeAsync("NToastNotify")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
