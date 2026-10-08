@@ -1,6 +1,8 @@
 using HWBMed.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using NToastNotify;
 
 namespace HWBMed
@@ -17,9 +19,11 @@ namespace HWBMed
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews()
+                            .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+                            .AddDataAnnotationsLocalization()
                             .AddNToastNotifyToastr(new ToastrOptions()
                             {
                                 ProgressBar = true,
@@ -27,6 +31,13 @@ namespace HWBMed
                                 TimeOut = 5000,
                                 TapToDismiss = true
                             });
+            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var cultures = new[] { "pt-PT", "en" };
+                options.SetDefaultCulture(cultures[0])
+                       .AddSupportedCultures(cultures)
+                       .AddSupportedUICultures(cultures);
+            });
 
             var app = builder.Build();
 
@@ -44,6 +55,9 @@ namespace HWBMed
 
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            var localOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(localOptions!.Value);
 
             app.UseAuthorization();
 
