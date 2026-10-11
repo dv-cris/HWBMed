@@ -7,7 +7,7 @@
 
 @{
     
-    var cultureItems = LocOptions.Value.SupportedUICultures
+    var cultureItems = LocOptions.Value.SupportedUICultures?
                                                         .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName })
                                                         .ToList();
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();

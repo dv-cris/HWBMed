@@ -1,5 +1,10 @@
 using HWBMed.Data;
+using HWBMed.Repositories;
+using HWBMed.Repositories.Interfaces;
+using HWBMed.Services;
+using HWBMed.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -21,19 +26,29 @@ namespace HWBMed
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            builder.Services.AddControllersWithViews()
-                            .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
-                            .AddDataAnnotationsLocalization()
-                            .AddNToastNotifyToastr(new ToastrOptions()
-                            {
-                                ProgressBar = true,
-                                PositionClass = ToastPositions.TopLeft,
-                                TimeOut = 5000,
-                                TapToDismiss = true
-                            });
+
+            //Configure services and Repositories
+            builder.Services.AddScoped<IClientService, ClientService>()
+                            .AddScoped<IClientRepository, ClientRepository>();
+
+            builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+            builder.Services
+                .AddControllersWithViews(options =>
+                {
+                    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                })
+                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+                .AddDataAnnotationsLocalization()
+                .AddNToastNotifyToastr(new ToastrOptions()
+                {
+                    ProgressBar = true,
+                    PositionClass = ToastPositions.TopLeft,
+                    TimeOut = 5000,
+                    TapToDismiss = true
+                });
             builder.Services.Configure<RequestLocalizationOptions>(options =>
             {
-                var cultures = new[] { "pt-PT", "en" };
+                var cultures = new[] { "pt-BR", "en" };
                 options.SetDefaultCulture(cultures[0])
                        .AddSupportedCultures(cultures)
                        .AddSupportedUICultures(cultures);
